@@ -10,7 +10,8 @@ class CurrencyConverter:
         converted_amount = amount * conversion_rate
         return converted_amount
 
-# Exchange rates as of September 2021 (for example purposes)
+# Currency exchange rates
+
 exchange_rates = {
     "USD": 1.0,
     "EUR": 0.85,
