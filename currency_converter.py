@@ -1,39 +1,50 @@
-class CurrencyConverter:
-    def __init__(self, rates):
-        self.rates = rates
-    
-    def convert(self, amount, from_currency, to_currency):
-        if from_currency not in self.rates or to_currency not in self.rates:
-            return "Currency not supported"
-        
-        conversion_rate = self.rates[to_currency] / self.rates[from_currency]
-        converted_amount = amount * conversion_rate
-        return converted_amount
+# Python program to convert the currency
+# of one country to that of another country
 
-# Currency exchange rates
+# Import the modules needed
+import requests
+import json
 
-exchange_rates = {
-    "USD": 1.0,
-    "EUR": 0.85,
-    "GBP": 0.72,
-    "JPY": 110.20,
-    "CAD": 1.25,
-    # Add more exchange rates here
+class Currency_convertor:
+	# empty dict to store the conversion rates
+	rates = {}
+	def __init__(self, url):
+		data = requests.get(url).json()
+
+		# Extracting only the rates from the json data
+		self.rates = data["rates"]
+
+	# function to do a simple cross multiplication between
+	# the amount and the conversion rates
+	def convert(self, from_currency, to_currency, amount):
+		initial_amount = amount
+		if from_currency != 'EUR' :
+			amount = amount / self.rates[from_currency]
+
+		# limiting the precision to 2 decimal places
+		amount = round(amount * self.rates[to_currency], 2)
+		print('{} {} = {} {}'.format(initial_amount, from_currency, amount, to_currency))
+
+# Driver code
+if __name__ == "__main__":
+
+	# YOUR_ACCESS_KEY = 'GET YOUR ACCESS KEY FROM fixer.io'
+	url = "https://currency-converter18.p.rapidapi.com/api/v1/convert"
+
+querystring = {"from":"from_country","to":"to_country","amount":"amount"}
+
+headers = {
+	"X-RapidAPI-Key": "a322f610f3mshc1ad9ed367e92d6p1fffa0jsn3f04cff0f7bb",
+	"X-RapidAPI-Host": "currency-converter18.p.rapidapi.com"
 }
 
-converter = CurrencyConverter(exchange_rates)
+response = requests.get(url, headers=headers, params=querystring)
 
-while True:
-    print("Available currencies:", ", ".join(exchange_rates.keys()))
-    from_currency = input("Enter the source currency (e.g., USD): ").upper()
-    to_currency = input("Enter the target currency (e.g., EUR): ").upper()
+print(response.json())
+    c = Currency_convertor(url)
+	from_country = input("From Country: ")
+	to_country = input("TO Country: ")
+	amount = int(input("Amount: "))
 
-    amount = float(input("Enter the amount: "))
-    
-    converted_amount = converter.convert(amount, from_currency, to_currency)
-    print(f"{amount:.2f} {from_currency} is equivalent to {converted_amount:.2f} {to_currency}")
+	c.convert(from_country, to_country, amount)
 
-    another_conversion = input("Do you want to perform another conversion? (y/n): ")
-    if another_conversion.lower() != 'y':
-        print("Goodbye!")
-        break
